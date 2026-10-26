@@ -40,7 +40,20 @@ def convert_to_minutes(value):
 
 # Create new numerical columns
 time_columns = ["t1wt", "t2wt", "t3p50", "t3p95", "t45p50", "t45p95"]
+# Create an upper-bound column for T2 waiting time
+def convert_t2_upper_bound(value):
+    if pd.isna(value):
+        return None
 
+    value = str(value).strip().lower()
+
+    if "less than 15 minutes" in value:
+        return 15
+
+    return convert_to_minutes(value)
+
+
+df["t2wt_upper_bound_minutes"] = df["t2wt"].apply(convert_t2_upper_bound)
 for col in time_columns:
     df[col + "_minutes"] = df[col].apply(convert_to_minutes)
 
